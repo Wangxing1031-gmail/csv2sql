@@ -5,6 +5,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+	<script src="./js/jquery.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -41,13 +42,14 @@
 		<div class="row" style="visibility: hidden;" id="spin_container">
 			<img src="./image/spin.gif" style="width: 100px; height: auto;">
 		</div>
+		<h4 id="convertStatus"></h4>
 		<div class="row" id="messageBox" style="display: none;">
-			<p>All Data inserted to DB successfully.</p>
+			<!-- <p>All Data inserted to DB successfully.</p> -->
 		</div>
 		<div class="row" style="display: none;">
 			<div class="col-12 col-md-10">
 				<progress id="convertProgressBar" value="0" max="100" class="full-width"></progress>
-				<h4 id="convertStatus"></h4>
+				<!-- <h4 id="convertStatus"></h4> -->
 			</div>
 			<!-- <div class="col-12 col-md-2">
 				<a href="" id="downloadLink" download></a>

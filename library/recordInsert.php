@@ -31,9 +31,7 @@
     function createTable($tablename){
         global $conn;
         $sql = "SHOW TABLES LIKE `%$tablename%`";
-        // print_r($sql);
         $val = $conn->query($sql);
-        // var_dump($val);
         if( $val == false){
             $sql = "CREATE TABLE `$tablename` (
               `ID` int(6), `Keyword` varchar(200),
@@ -64,27 +62,33 @@
             }
         }
     }
+    function createProgressTable(){
+        global $conn;
+        $sql = "CREATE TABLE `insert_progress`(
+            `ID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT
+        )";
+    }
     function deleteTable($tablename){
         global $conn;
         $sql = "DROP TABLE `$tablename`";
         $conn->query($sql);
     }
-    deleteTable("Database_garage-door-repair");
+    // deleteTable("Database_garage-door-repair");
     createTable("Database_garage-door-repair");
     createTable("Database_garage-door-repair_raw");
 
-    function isInDB($tablename, $field_list){
+    function isInDB($tablename, $field_value){
         global $conn;
 
-        $sql = "SELECT ID FROM `$tablename` WHERE Keyword='$field_list[1]' AND Name='$field_list[2]' AND Full_Address='$field_list[3]' AND Website='$field_list[9]' AND Phone='$field_list[10]'";
+        $sql = "SELECT ID FROM `$tablename` WHERE hash='$field_value'";
+        // $sql = "SELECT ID FROM `$tablename` WHERE Keyword='$field_list[1]' AND Name='$field_list[2]' AND Full_Address='$field_list[3]' AND Website='$field_list[9]' AND Phone='$field_list[10]'";
         $result = $conn->query($sql);
         if( !$result){
             return false;
         } else if ($result->num_rows > 0) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
     function deleteDuplicateRows($tablename){
         global $conn;
@@ -106,9 +110,13 @@
         $query = "INSERT INTO `$tablename`(" . implode(",", $header_list) . ") VALUES(" . implode(",", $placeholders) . ")";
         $stmt = $conn->prepare($query);
         if( !$stmt)return false;
-        // print_r($query);
         $fields = 'i' . str_repeat('s', count($field_list));
-        $hash = hash('sha256', $field_list[1] . $field_list[2] . $field_list[3] . $field_list[9] . $field_list[10]);
+        $join = $field_list[1] . ":" . $field_list[2] . ":" . $field_list[3] . ":" . $field_list[9] . ":" . $field_list[10];
+        $join = base64_encode(gzcompress($join, 9));
+        // if( isInDB($tablename, $join)){
+        //     return false;
+        // }
+        // $hash = hash('sha256', $field_list[1] . $field_list[2] . $field_list[3] . $field_list[9] . $field_list[10]);
         $stmt->bind_param(
             $fields,
             $field_list[0], $field_list[1], $field_list[2], $field_list[3], $field_list[4],
@@ -121,17 +129,15 @@
             $field_list[25], $field_list[26], $field_list[27], $field_list[28], $field_list[29],
             
             $field_list[30], $field_list[31], $field_list[32], $field_list[33], $field_list[34],
-            $field_list[35], $field_list[36], $hash
+            $field_list[35], $field_list[36], $join
         );
         return $stmt->execute();
     }
     function insertRow_List($tablename, $record_list){
         global $conn;
         $sql = "";
-        // $sql = "INSERT INTO `$tablename`  VALUES ";
-        $first_record = true;
+        $first_record = true ;
         foreach( $record_list as $record){
-            // ID,Keyword,Name,Full_Address,Street_Address,City,State,Zip,Plus_Code,Website,Phone,Email,Facebook,Twitter,Instagram,Lat,Lng,Verification_Text,Category,Rating,Reviews,Top_Image_URL,Sub_Title,Pricing,Amenities,Description,Summary,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,External_Urls,Photo_Tags,URL
             $record_line_sql = "INSERT INTO `$tablename`  VALUES ";
             $record_line_sql .= "(";
             $is_first = true;
@@ -145,7 +151,5 @@
         echo $conn->error;
         return $conn->error;
     }
-
-    // mysqli_close($conn);
 
 ?>

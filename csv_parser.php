@@ -2,19 +2,38 @@
 
     require_once __DIR__ . '/library/recordInsert.php';
     $file_name = './uploads/'.$_POST['ods'];
+    $file_progress_name = $file_name . ".prg";
     $handle = @fopen( $file_name, "r");
     if ($handle) {
         $cur_record = "";
         $is_first = true;
+        $total_count = 0;
+        $inserted_count = 0;
+        $duplicated_count = 0;
+        $prev_time = time();
         while( ($data = fgetcsv($handle)) != FALSE){
             if( $is_first){
                 $is_first = false;
                 echo "<hr>header<hr>";
                 continue;
             }
-            insertRow('Database_garage-door-repair', $data);
+            $total_count++;
+            if( insertRow('Database_garage-door-repair', $data)){
+                $inserted_count ++;
+            } else {
+                $duplicated_count ++;
+            }
             insertRow('Database_garage-door-repair_raw', $data);
+            if( time() >= $prev_time + 2){
+                $prev_time = time();
+                $progress_string = ($inserted_count == 0 ? "0" : $inserted_count) . 
+                " records inserted / " . ($duplicated_count == 0 ? "0" : $duplicated_count) . " records rejected.";
+                file_put_contents($file_progress_name, $progress_string);
+            }
         }
+        $progress_string = "Done : " . ($inserted_count == 0 ? "0" : $inserted_count) . 
+        " records inserted / " . ($duplicated_count == 0 ? "0" : $duplicated_count) . " records rejected.";
+        file_put_contents($file_progress_name, $progress_string);
         fclose($handle);
     }
     unlink($file_name);

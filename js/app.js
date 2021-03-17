@@ -43,12 +43,12 @@ function fileUploadBtnClicked() {
   document.getElementById('btnConvert').disabled = true;
   // document.getElementById('downloadBtn').disabled = true;
 }
-
+var timer;
 function convertClicked() {
   document.getElementById('btnConvert').disabled = true;
   document.getElementById('spin_container').visibility = "visible";
   var ajax = new XMLHttpRequest();
-  ajax.upload.addEventListener("progress", convertProgressHandler, false);
+  // ajax.upload.addEventListener("progress", convertProgressHandler, false);
   ajax.addEventListener("load", convertCompleteHandler, false);
   ajax.addEventListener("error", convertErrorHandler, false);
   ajax.addEventListener("abort", convertAbortHandler, false);
@@ -56,6 +56,32 @@ function convertClicked() {
   var formdata = new FormData();
   formdata.append("ods", uploaded_file);
   ajax.send(formdata);
+  timer = setInterval( getInsertProgress, 2000);
+}
+
+function getInsertProgress(){
+  var ajax = new XMLHttpRequest();
+  // ajax.upload.addEventListener("progress", convertProgressHandler, false);
+  ajax.addEventListener("load", insertCompleteHandler, false);
+  // ajax.addEventListener("error", convertErrorHandler, false);
+  // ajax.addEventListener("abort", convertAbortHandler, false);
+  ajax.open("POST", "getInsertProgress.php");
+  var formdata = new FormData();
+  formdata.append("filename", uploaded_file);
+  ajax.send(formdata);
+  // $.post("getInsertProgress.php", {filename : uploaded_file}, function(data){
+  //   $("#convertStatus").html(data);
+  //   if( data.substring(0, 4) == "Done"){
+  //     clearInterval(timer);
+  //   }
+  // })
+}
+
+function insertCompleteHandler(event){
+  _("convertStatus").innerHTML = event.target.responseText;
+  if( event.target.responseText.substring(0, 4) == "Done"){
+    clearInterval(timer);
+  }
 }
 
 function convertProgressHandler(event) {
@@ -65,7 +91,7 @@ function convertProgressHandler(event) {
 }
 
 function convertCompleteHandler(event) {
-  _("convertStatus").innerHTML = event.target.responseText;
+  // _("convertStatus").innerHTML = event.target.responseText;
   _("convertProgressBar").value = 0; //wil clear progress bar after successful convert
   // document.getElementById('downloadLink').href = "./converted/"+uploaded_file+".fet";
   // document.getElementById('downloadBtn').disabled = false;
@@ -74,9 +100,9 @@ function convertCompleteHandler(event) {
 }
 
 function convertErrorHandler(event) {
-  _("convertStatus").innerHTML = "Convert Failed";
+  _("convertStatus").innerHTML = "Inserting Failed";
 }
 
 function convertAbortHandler(event) {
-  _("convertStatus").innerHTML = "Convert Aborted";
+  _("convertStatus").innerHTML = "Inserting Aborted";
 }
