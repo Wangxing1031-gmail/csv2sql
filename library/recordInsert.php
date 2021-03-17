@@ -28,6 +28,7 @@
     }
     echo "Connected successfully <br>";
     $header_list = ['ID','Keyword','Name','Full_Address','Street_Address','City','State','Zip','Plus_Code','Website','Phone','Email','Facebook','Twitter','Instagram','Lat','Lng','Verification_Text','Category','Rating','Reviews','Top_Image_URL','Sub_Title','Pricing','Amenities','Description','Summary','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','External_Urls','Photo_Tags','URL', 'hash'];
+    $header_list_raw = ['ID','Keyword','Name','Full_Address','Street_Address','City','State','Zip','Plus_Code','Website','Phone','Email','Facebook','Twitter','Instagram','Lat','Lng','Verification_Text','Category','Rating','Reviews','Top_Image_URL','Sub_Title','Pricing','Amenities','Description','Summary','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','External_Urls','Photo_Tags','URL', 'hash'];
     function createTable($tablename){
         global $conn;
         $sql = "SHOW TABLES LIKE `%$tablename%`";
