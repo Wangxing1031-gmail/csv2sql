@@ -27,35 +27,68 @@
         die("Connection failed: " . $conn->connect_error);
     }
     echo "Connected successfully <br>";
-    $header_list = ['ID','Keyword','Name','Full_Address','Street_Address','City','State','Zip','Plus_Code','Website','Phone','Email','Facebook','Twitter','Instagram','Lat','Lng','Verification_Text','Category','Rating','Reviews','Top_Image_URL','Sub_Title','Pricing','Amenities','Description','Summary','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','External_Urls','Photo_Tags','URL', 'hash'];
-    $header_list_raw = ['ID','Keyword','Name','Full_Address','Street_Address','City','State','Zip','Plus_Code','Website','Phone','Email','Facebook','Twitter','Instagram','Lat','Lng','Verification_Text','Category','Rating','Reviews','Top_Image_URL','Sub_Title','Pricing','Amenities','Description','Summary','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','External_Urls','Photo_Tags','URL', 'hash'];
+    $header_list = [ 
+        'ID', 'Name', 'Full_Address', 'Street_Address', 'City', 
+        'State', 'Zip', 'Plus_Code', 'Website', 'Phone', 
+        'Email', 'Facebook', 'Twitter', 'Instagram', 'Lat', 
+        'Lng', 'Category', 'Rating', 'Reviews', 'Top_Image_URL', 
+        'Sub_Title', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 
+        'Friday', 'Saturday', 'Sunday', 'URL', 'verified', 
+        'hash'];
+    $header_list_types = [
+        'int(6)', 'varchar(200)', 'varchar(200)', 'varchar(150)', 'varchar(100)', 
+        'varchar(20)', 'varchar(20)', 'varchar(250)', 'varchar(250)', 'varchar(50)', 
+        'varchar(125)', 'varchar(200)', 'varchar(200)', 'varchar(200)', 'varchar(60)', 
+        'varchar(60)', 'varchar(60)', 'varchar(5)', 'varchar(6)', 'varchar(250)', 
+        'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 
+        'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(255)', 'varchar(5)', 
+        'varchar(256) NOT NULL'
+    ];
+
+    $header_list_raw = [ 
+        'ID', 'Keyword', 'Name', 'Full_Address', 'Street_Address', 
+        'City', 'State', 'Zip', 'Plus_Code', 'Website', 
+        'Phone', 'Email', 'Facebook', 'Twitter', 'Instagram', 
+        'Lat', 'Lng', 'Verification_Text', 'Category', 'Rating', 
+        'Reviews', 'Top_Image_URL', 'Sub_Title', 'Pricing', 'Amenities', 
+        'Description', 'Summary', 'Monday', 'Tuesday', 'Wednesday', 
+        'Thursday', 'Friday', 'Saturday', 'Sunday', 'External_Urls', 
+        'Photo_Tags', 'URL', 'none', 'hash'
+    ];
+        
+    $header_list_raw_types = [ 
+        'int(6)', 'varchar(255)', 'varchar(200)', 'varchar(200)', 'varchar(150)', 
+        'varchar(100)', 'varchar(20)', 'varchar(20)', 'varchar(250)', 'varchar(250)', 
+        'varchar(50)', 'varchar(125)', 'varchar(200)', 'varchar(200)', 'varchar(200)', 
+        'varchar(60)', 'varchar(60)', 'varchar(60)', 'varchar(60)', 'varchar(5)', 
+        'varchar(6)', 'varchar(250)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 
+        'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 
+        'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 
+        'varchar(50)', 'varchar(255)', 'varchar(1)', 'varchar(256) NOT NULL'
+    ];
+    
     function createTable($tablename){
         global $conn;
+        global $header_list;
+        global $header_list_types;
+        global $header_list_raw;
+        global $header_list_raw_types;
+        if( $tablename == "Database_garage-door-repair"){
+            $header_tmp_list = $header_list;
+            $header_tmp_list_type = $header_list_types;
+        } else {
+            $header_tmp_list = $header_list_raw;
+            $header_tmp_list_type = $header_list_raw_types;
+        }
         $sql = "SHOW TABLES LIKE `%$tablename%`";
         $val = $conn->query($sql);
         if( $val == false){
-            $sql = "CREATE TABLE `$tablename` (
-              `ID` int(6), `Keyword` varchar(200),
-              `Name` varchar(100), `Full_Address` varchar(200),
-              `Street_Address` varchar(150), `City` varchar(100),
-              `State` varchar(20), `Zip` varchar(20),
-              `Plus_Code` varchar(250), `Website` varchar(250),
-              `Phone` varchar(50), `Email` varchar(125),
-              `Facebook` varchar(200), `Twitter` varchar(200),
-              `Instagram` varchar(200), `Lat` varchar(60),
-              `Lng` varchar(60), `Verification_Text` varchar(200), `Category` varchar(60),
-              `Rating` varchar(10), `Reviews` varchar(20),
-              `Top_Image_URL` varchar(250), `Sub_Title` varchar(50), 
-              `Pricing` varchar(200), `Amenities` varchar(200), 
-              `Description` varchar(200), `Summary` varchar(200), 
-              `Monday` varchar(50), `Tuesday` varchar(50),
-              `Wednesday` varchar(50), `Thursday` varchar(50),
-              `Friday` varchar(50), `Saturday` varchar(50),
-              `Sunday` varchar(50), `External_Urls` varchar(255), 
-              `Photo_Tags` varchar(255), `URL` varchar(255),
-              `hash` varchar(256) NOT NULL,
-              PRIMARY KEY (`hash`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+            $sql = "CREATE TABLE `$tablename` (";
+            foreach( $header_tmp_list as $index => $header){
+                $type = $header_tmp_list_type[$index];
+                $sql .= "`$header` " . $type . ",";
+            }
+            $sql .= " PRIMARY KEY (`hash`)) ENGINE=MyISAM DEFAULT CHARSET=utf8";
             if( $conn->query($sql)){
                 echo "created.";
             } else {
@@ -63,75 +96,66 @@
             }
         }
     }
-    function createProgressTable(){
-        global $conn;
-        $sql = "CREATE TABLE `insert_progress`(
-            `ID` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT
-        )";
-    }
-    function deleteTable($tablename){
-        global $conn;
-        $sql = "DROP TABLE `$tablename`";
-        $conn->query($sql);
-    }
-    // deleteTable("Database_garage-door-repair");
     createTable("Database_garage-door-repair");
     createTable("Database_garage-door-repair_raw");
 
-    function isInDB($tablename, $field_value){
-        global $conn;
-
-        $sql = "SELECT ID FROM `$tablename` WHERE hash='$field_value'";
-        // $sql = "SELECT ID FROM `$tablename` WHERE Keyword='$field_list[1]' AND Name='$field_list[2]' AND Full_Address='$field_list[3]' AND Website='$field_list[9]' AND Phone='$field_list[10]'";
-        $result = $conn->query($sql);
-        if( !$result){
-            return false;
-        } else if ($result->num_rows > 0) {
-            return true;
-        }
-        return false;
-    }
-    function deleteDuplicateRows($tablename){
-        global $conn;
-        $sql = "DELETE t1 FROM `$tablename` t1 INNER JOIN `$tablename` t2 WHERE t1.ID < t2.ID AND t1.Keyword = t2.Keyword AND t1.Name = t2.Name AND t1.Full_Address = t2.Full_Address AND t1.WebSite = t2.WebSite AND t1.Phone = t2.Phone;";
-        print_r($sql);
-        echo "<hr>";
-        $conn->query($sql);
-    }
-    function injectTable2Other($fromTable, $toTable){
-        global $conn;
-        $sql = "INSERT INTO `$toTable` SELECT * FROM `$fromTable`";
-        $conn->query($sql);
-        deleteDuplicateRows($toTable);
-    }
     function insertRow($tablename, $field_list){
         global $conn;
         global $header_list;
-        $placeholders = array_fill(0, count($header_list), '?');
+        global $header_list_types;
+        global $header_list_raw;
+        global $header_list_raw_types;
+
+        if( $tablename == "Database_garage-door-repair"){
+            $header_tmp_list = $header_list;
+            $header_tmp_list_type = $header_list_types;
+            $join = $field_list[1] . ":" . $field_list[2] . ":" . $field_list[8] . ":" . $field_list[9];
+        } else {
+            $header_tmp_list = $header_list_raw;
+            $header_tmp_list_type = $header_list_raw_types;
+            $join = $field_list[1] . ":" . $field_list[2] . ":" . $field_list[3] . ":" . $field_list[9] . ":" . $field_list[10];
+        }
+        $placeholders = array_fill(0, count($header_tmp_list), '?');
         $query = "INSERT INTO `$tablename`(" . implode(",", $header_list) . ") VALUES(" . implode(",", $placeholders) . ")";
         $stmt = $conn->prepare($query);
         if( !$stmt)return false;
-        $fields = 'i' . str_repeat('s', count($field_list));
-        $join = $field_list[1] . ":" . $field_list[2] . ":" . $field_list[3] . ":" . $field_list[9] . ":" . $field_list[10];
-        $join = base64_encode(gzcompress($join, 9));
-        // if( isInDB($tablename, $join)){
-        //     return false;
-        // }
-        // $hash = hash('sha256', $field_list[1] . $field_list[2] . $field_list[3] . $field_list[9] . $field_list[10]);
-        $stmt->bind_param(
-            $fields,
-            $field_list[0], $field_list[1], $field_list[2], $field_list[3], $field_list[4],
-            $field_list[5], $field_list[6], $field_list[7], $field_list[8], $field_list[9],
-            
-            $field_list[10], $field_list[11], $field_list[12], $field_list[13], $field_list[14],
-            $field_list[15], $field_list[16], $field_list[17], $field_list[18], $field_list[19],
-            
-            $field_list[20], $field_list[21], $field_list[22], $field_list[23], $field_list[24],
-            $field_list[25], $field_list[26], $field_list[27], $field_list[28], $field_list[29],
-            
-            $field_list[30], $field_list[31], $field_list[32], $field_list[33], $field_list[34],
-            $field_list[35], $field_list[36], $join
-        );
+        $fields = 'i' . str_repeat('s', count($header_tmp_list) - 1);
+        // print_r($fields);
+        // echo "<hr>";
+        $hash = base64_encode(gzcompress($join, 9));
+        $null_string = "";
+        if( $tablename == "Database_garage-door-repair"){
+            $stmt->bind_param(
+                $fields,
+                $field_list[0], $field_list[2], $field_list[3], $field_list[4], $field_list[5],
+                $field_list[6], $field_list[7], $field_list[8], $field_list[9], $field_list[10],
+
+                $field_list[11], $field_list[12], $field_list[13], $field_list[14], $field_list[15], 
+                $field_list[16], $field_list[18], $field_list[19], $field_list[20], $field_list[21], 
+                
+                $field_list[22], $field_list[27], $field_list[28], $field_list[29], $field_list[30], 
+                $field_list[31], $field_list[32], $field_list[33], $field_list[36], $null_string, 
+                
+                $hash
+            );
+        } else {
+            $stmt->bind_param(
+                $fields,
+                $field_list[0], $field_list[1], $field_list[2], $field_list[3], $field_list[4],
+                $field_list[5], $field_list[6], $field_list[7], $field_list[8], $field_list[9],
+                
+                $field_list[10], $field_list[11], $field_list[12], $field_list[13], $field_list[14],
+                $field_list[15], $field_list[16], $field_list[17], $field_list[18], $field_list[19],
+                
+                $field_list[20], $field_list[21], $field_list[22], $field_list[23], $field_list[24],
+                $field_list[25], $field_list[26], $field_list[27], $field_list[28], $field_list[29],
+                
+                $field_list[30], $field_list[31], $field_list[32], $field_list[33], $field_list[34],
+                $field_list[35], $field_list[36], $null_string, $hash
+            );
+
+        }
+
         return $stmt->execute();
     }
     function insertRow_List($tablename, $record_list){

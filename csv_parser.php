@@ -10,6 +10,9 @@
         $total_count = 0;
         $inserted_count = 0;
         $duplicated_count = 0;
+        $inserted_count_raw = 0;
+        $duplicated_count_raw = 0;
+
         $prev_time = time();
         while( ($data = fgetcsv($handle)) != FALSE){
             if( $is_first){
@@ -23,16 +26,24 @@
             } else {
                 $duplicated_count ++;
             }
-            insertRow('Database_garage-door-repair_raw', $data);
+            if(insertRow('Database_garage-door-repair_raw', $data)){
+                $inserted_count_raw ++;
+            } else {
+                $duplicated_count_raw ++;
+            }
             if( time() >= $prev_time + 2){
                 $prev_time = time();
                 $progress_string = ($inserted_count == 0 ? "0" : $inserted_count) . 
-                " records inserted / " . ($duplicated_count == 0 ? "0" : $duplicated_count) . " records rejected.";
+                " records inserted / " . ($duplicated_count == 0 ? "0" : $duplicated_count) . " records rejected in Database_garage-door-repair.<br>";
+                $progress_string .= ($inserted_count_raw == 0 ? "0" : $inserted_count_raw) . 
+                " records inserted / " . ($duplicated_count_raw == 0 ? "0" : $duplicated_count_raw) . " records rejected in Database_garage-door-repair_raw.";
                 file_put_contents($file_progress_name, $progress_string);
             }
         }
-        $progress_string = "Done : " . ($inserted_count == 0 ? "0" : $inserted_count) . 
-        " records inserted / " . ($duplicated_count == 0 ? "0" : $duplicated_count) . " records rejected.";
+        $progress_string = "Done : <br>" . ($inserted_count == 0 ? "0" : $inserted_count) . 
+        " records inserted / " . ($duplicated_count == 0 ? "0" : $duplicated_count) . " records rejected in Database_garage-door-repair.<br>";
+        $progress_string .= ($inserted_count_raw == 0 ? "0" : $inserted_count_raw) . 
+        " records inserted / " . ($duplicated_count_raw == 0 ? "0" : $duplicated_count_raw) . " records rejected in Database_garage-door-repair_raw.";
         file_put_contents($file_progress_name, $progress_string);
         fclose($handle);
     }
