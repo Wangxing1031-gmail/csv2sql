@@ -26,7 +26,7 @@
             } else {
                 $duplicated_count ++;
             }
-            if(insertRow('Database_garage-door-repair_raw', $data)){
+            if( insertRow('Database_garage-door-repair_raw', $data)){
                 $inserted_count_raw ++;
             } else {
                 $duplicated_count_raw ++;

@@ -64,7 +64,7 @@
         'varchar(6)', 'varchar(250)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 
         'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 
         'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 
-        'varchar(50)', 'varchar(255)', 'varchar(1)', 'varchar(256) NOT NULL'
+        'varchar(50)', 'varchar(255)', 'varchar(5)', 'varchar(256) NOT NULL'
     ];
     
     function createTable($tablename){
@@ -116,12 +116,11 @@
             $join = $field_list[1] . ":" . $field_list[2] . ":" . $field_list[3] . ":" . $field_list[9] . ":" . $field_list[10];
         }
         $placeholders = array_fill(0, count($header_tmp_list), '?');
-        $query = "INSERT INTO `$tablename`(" . implode(",", $header_list) . ") VALUES(" . implode(",", $placeholders) . ")";
+        $query = "INSERT INTO `$tablename`(" . implode(",", $header_tmp_list) . ") VALUES(" . implode(",", $placeholders) . ")";
         $stmt = $conn->prepare($query);
         if( !$stmt)return false;
         $fields = 'i' . str_repeat('s', count($header_tmp_list) - 1);
-        // print_r($fields);
-        // echo "<hr>";
+        
         $hash = base64_encode(gzcompress($join, 9));
         $null_string = "";
         if( $tablename == "Database_garage-door-repair"){
@@ -155,8 +154,11 @@
             );
 
         }
-
-        return $stmt->execute();
+        $retval = $stmt->execute();
+        if( $retval) return true;
+        print_r( $stmt->error);
+        return false;
+        // return $stmt->execute();
     }
     function insertRow_List($tablename, $record_list){
         global $conn;
