@@ -109,7 +109,7 @@
         if( $tablename == "Database_garage-door-repair"){
             $header_tmp_list = $header_list;
             $header_tmp_list_type = $header_list_types;
-            $join = $field_list[1] . ":" . $field_list[2] . ":" . $field_list[8] . ":" . $field_list[9];
+            $join = $field_list[2] . ":" . $field_list[3] . ":" . $field_list[9] . ":" . $field_list[10];
         } else {
             $header_tmp_list = $header_list_raw;
             $header_tmp_list_type = $header_list_raw_types;
