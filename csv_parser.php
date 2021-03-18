@@ -52,7 +52,7 @@
         $progress_string = "Done : <br>" . ($inserted_count == 0 ? "0" : $inserted_count) . 
         " records inserted / " . ($duplicated_count == 0 ? "0" : $duplicated_count) . " records rejected in Database_garage-door-repair.<br>";
         $progress_string .= ($inserted_count_raw == 0 ? "0" : $inserted_count_raw) . 
-        " records inserted / " . ($duplicated_count_raw == 0 ? "0" : $duplicated_count_raw) . " records rejected in Database_garage-door-repair_raw.";
+        " records inserted / " . ($duplicated_count_raw == 0 ? "0" : $duplicated_count_raw) . " records rejected in Database_garage-door-repair_raw.<br>";
         $progress_string .= ($inserted_count_kc == 0 ? "0" : $inserted_count_kc) . 
         " records inserted / " . ($duplicated_count_kc == 0 ? "0" : $duplicated_count_kc) . " records rejected in Database_garage-door-kc.";
         file_put_contents($file_progress_name, $progress_string);

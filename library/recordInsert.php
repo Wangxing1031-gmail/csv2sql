@@ -7,16 +7,16 @@
 
     // require_once __DIR__ . "/Mysql.php";
 
-    // $servername = "localhost";
-    // $username = "root";
-    // $password = "";
-    // $dbname = "contact_list";
-    
-    
     $servername = "localhost";
-    $username = "glinks";
-    $password = "672416";
-    $dbname = "trialpro";
+    $username = "root";
+    $password = "";
+    $dbname = "contact_list";
+    
+    
+    // $servername = "localhost";
+    // $username = "glinks";
+    // $password = "672416";
+    // $dbname = "trialpro";
 
 
     // Create connection
@@ -81,13 +81,15 @@
         global $header_list_types;
         global $header_list_raw;
         global $header_list_raw_types;
+        global $header_list_kc;
+        global $header_list_kc_types;
         if( $tablename == "Database_garage-door-repair"){
             $header_tmp_list = $header_list;
             $header_tmp_list_type = $header_list_types;
-        } else if($table_name == "Database_garage-door-repair_raw"){
+        } else if($tablename == "Database_garage-door-repair_raw"){
             $header_tmp_list = $header_list_raw;
             $header_tmp_list_type = $header_list_raw_types;
-        } else if($table_name == "Database_garage-door-kc"){
+        } else if($tablename == "Database_garage-door-kc"){
             $header_tmp_list = $header_list_kc;
             $header_tmp_list_type = $header_list_kc_types;
         }
@@ -123,24 +125,30 @@
         if( $tablename == "Database_garage-door-repair"){
             $header_tmp_list = $header_list;
             $header_tmp_list_type = $header_list_types;
+            $fields = 'i' . str_repeat('s', count($header_tmp_list) - 1);
             $join = $field_list[2] . ":" . $field_list[3] . ":" . $field_list[9] . ":" . $field_list[10];
         } else if($tablename == "Database_garage-door-repair_raw"){
             $header_tmp_list = $header_list_raw;
             $header_tmp_list_type = $header_list_raw_types;
+            $fields = 'i' . str_repeat('s', count($header_tmp_list) - 1);
             $join = $field_list[1] . ":" . $field_list[2] . ":" . $field_list[3] . ":" . $field_list[9] . ":" . $field_list[10];
         } else if( $tablename == "Database_garage-door-kc"){
             $header_tmp_list = $header_list_kc;
             $header_tmp_list_type = $header_list_kc_types;
+            $fields = str_repeat('s', count($header_tmp_list));
             $join = $field_list[1] . ":" . $field_list[10];
         }
         $placeholders = array_fill(0, count($header_tmp_list), '?');
         $query = "INSERT INTO `$tablename`(" . implode(",", $header_tmp_list) . ") VALUES(" . implode(",", $placeholders) . ")";
         $stmt = $conn->prepare($query);
         if( !$stmt)return false;
-        $fields = 'i' . str_repeat('s', count($header_tmp_list) - 1);
         
         $hash = base64_encode(gzcompress($join, 9));
         $null_string = "";
+        print_r($tablename);
+        echo "<hr>";
+        print_r($fields);
+        echo "<hr>";
         if( $tablename == "Database_garage-door-repair"){
             $stmt->bind_param(
                 $fields,
@@ -155,7 +163,8 @@
                 
                 $hash
             );
-        } else if($table_name == "Databse_garage-door-repair_raw"){
+        } else if($tablename == "Database_garage-door-repair_raw"){
+            print_r(strlen($fields));
             $stmt->bind_param(
                 $fields,
                 $field_list[0], $field_list[1], $field_list[2], $field_list[3], $field_list[4],
@@ -170,7 +179,7 @@
                 $field_list[30], $field_list[31], $field_list[32], $field_list[33], $field_list[34],
                 $field_list[35], $field_list[36], $null_string, $hash
             );
-        } else if($table_name == "Database_garage-door-kc"){
+        } else if($tablename == "Database_garage-door-kc"){
             $stmt->bind_param(
                 $fields, $field_list[1], $field_list[10], $hash
             );
