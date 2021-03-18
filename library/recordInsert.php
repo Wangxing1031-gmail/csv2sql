@@ -66,6 +66,14 @@
         'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 'varchar(50)', 
         'varchar(50)', 'varchar(255)', 'varchar(5)', 'varchar(256) NOT NULL'
     ];
+
+    $header_list_kc = [ 
+        'Keyword', 'Phone', 'hash'
+    ];
+        
+    $header_list_kc_types = [ 
+        'varchar(255)', 'varchar(50)', 'varchar(256) NOT NULL'
+    ];
     
     function createTable($tablename){
         global $conn;
@@ -76,9 +84,12 @@
         if( $tablename == "Database_garage-door-repair"){
             $header_tmp_list = $header_list;
             $header_tmp_list_type = $header_list_types;
-        } else {
+        } else if($table_name == "Database_garage-door-repair_raw"){
             $header_tmp_list = $header_list_raw;
             $header_tmp_list_type = $header_list_raw_types;
+        } else if($table_name == "Database_garage-door-kc"){
+            $header_tmp_list = $header_list_kc;
+            $header_tmp_list_type = $header_list_kc_types;
         }
         $sql = "SHOW TABLES LIKE `%$tablename%`";
         $val = $conn->query($sql);
@@ -106,6 +117,8 @@
         global $header_list_types;
         global $header_list_raw;
         global $header_list_raw_types;
+        global $header_list_kc;
+        global $header_list_kc_types;
 
         if( $tablename == "Database_garage-door-repair"){
             $header_tmp_list = $header_list;
@@ -116,9 +129,9 @@
             $header_tmp_list_type = $header_list_raw_types;
             $join = $field_list[1] . ":" . $field_list[2] . ":" . $field_list[3] . ":" . $field_list[9] . ":" . $field_list[10];
         } else if( $tablename == "Database_garage-door-kc"){
-            $header_tmp_list = $header_list_raw;
-            $header_tmp_list_type = $header_list_raw_types;
-            $join = $field_list[1] . ":" . ":" . $field_list[10];
+            $header_tmp_list = $header_list_kc;
+            $header_tmp_list_type = $header_list_kc_types;
+            $join = $field_list[1] . ":" . $field_list[10];
         }
         $placeholders = array_fill(0, count($header_tmp_list), '?');
         $query = "INSERT INTO `$tablename`(" . implode(",", $header_tmp_list) . ") VALUES(" . implode(",", $placeholders) . ")";
@@ -142,7 +155,7 @@
                 
                 $hash
             );
-        } else {
+        } else if($table_name == "Databse_garage-door-repair_raw"){
             $stmt->bind_param(
                 $fields,
                 $field_list[0], $field_list[1], $field_list[2], $field_list[3], $field_list[4],
@@ -157,13 +170,15 @@
                 $field_list[30], $field_list[31], $field_list[32], $field_list[33], $field_list[34],
                 $field_list[35], $field_list[36], $null_string, $hash
             );
-
+        } else if($table_name == "Database_garage-door-kc"){
+            $stmt->bind_param(
+                $fields, $field_list[1], $field_list[10], $hash
+            );
         }
         $retval = $stmt->execute();
         if( $retval) return true;
         print_r( $stmt->error);
         return false;
-        // return $stmt->execute();
     }
     function insertRow_List($tablename, $record_list){
         global $conn;
