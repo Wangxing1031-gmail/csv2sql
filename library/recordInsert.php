@@ -145,10 +145,6 @@
         
         $hash = base64_encode(gzcompress($join, 9));
         $null_string = "";
-        print_r($tablename);
-        echo "<hr>";
-        print_r($fields);
-        echo "<hr>";
         if( $tablename == "Database_garage-door-repair"){
             $stmt->bind_param(
                 $fields,
@@ -164,7 +160,6 @@
                 $hash
             );
         } else if($tablename == "Database_garage-door-repair_raw"){
-            print_r(strlen($fields));
             $stmt->bind_param(
                 $fields,
                 $field_list[0], $field_list[1], $field_list[2], $field_list[3], $field_list[4],
